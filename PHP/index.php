@@ -9,9 +9,7 @@
  	$htmlBody = $loginControll->displayLogin();
 	$view->echoHTML($htmlBody);
 
-	
- 
- 	setlocale(LC_ALL, 'swedish');
- 	$day = utf8_encode(ucfirst(strftime("%A")));
- 	echo ucwords(strftime($day .'en. Den %d %B år %Y. Klockan är [%X].', strtotime('+1 hour')));
-?>
+    setlocale(LC_ALL, "sv_SE.utf8");
+    $date = strftime("%A, den %#d %B %Y. Klockan är [%X]");
+    $date = ucfirst($date);
+ 	echo $date;

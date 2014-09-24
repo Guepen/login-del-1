@@ -11,6 +11,7 @@ class loginView{
 	private $username = "username";
 	private $password = "password";
 	private $session = "session";
+    private $newUserFormLocation="register";
 
 	public function __construct(\model\loginModel $loginModel){
 		$this->loginModel = $loginModel;
@@ -79,7 +80,12 @@ class loginView{
 		return isset($_POST[$this->KeepMe]);
 	}
 
-
+    public function usrPressedAddNewUser(){
+        if(isset($_GET[$this->newUserFormLocation])){
+            return true;
+        }
+        return false;
+    }
 
 	public function showLoginView ($loggedIn){	
 		$ret = "";	
@@ -114,17 +120,17 @@ class loginView{
 	
 
 
-		$htmlBody = "<h1>Laboration login del 1</h1><h2>Ej Inloggad</h2><form action='' method='POST' >
+		$htmlBody = "<h1>Laboration login del 1 - Ej Inloggad</h1>
+		             <form action='' method='POST' >
+		             <a href='?register' name='newUser'>Registrera ny användare</a>
 					 <fieldset>
 					 <legend>Login - Skriv in användarnamn och lösenord</legend>
  					 $ret
- 					 </br>
  					 <label>Användarnamn : </label> <input type='text' name='".$this->username."' maxlength='30' value='".$this -> getUserName()."'/>
 					 <label>Lösenord : </label><input type='password' name='".$this->password."' maxlength='30'/>
 					 <label>Håll mig inloggad : </label><input type='checkbox' name='".$this->KeepMe."'/>
-					 <input type='submit' name='".$this->submitLogin."' value='Logga in'/> 
+					 <input type='submit' name='".$this->submitLogin."' value='Logga in'/>
 					 </fieldset>
-					 </br>
 					 </form>" ;
     				 return $htmlBody;
 		}

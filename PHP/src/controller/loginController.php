@@ -2,9 +2,14 @@
 	
 	namespace controller;
 
-   	require_once("src/view/loginView.php");
-	require_once("src/view/logOutView.php");
-	require_once("src/model/loginModel.php");
+   	require_once("./src/view/loginView.php");
+	require_once("./src/view/logOutView.php");
+    require_once("./src/view/NewUserView.php");
+	require_once("./src/model/loginModel.php");
+    require_once("./src/model/Exceptions/UsernameAndPasswordToShortException.php");
+    require_once("./src/model/Exceptions/PasswordToShortException.php");
+    require_once("./src/model/Exceptions/UsernameToShortException.php");
+    require_once("./src/model/Exceptions/PasswordsDontMatchException.php");
 
 
 class loginControll{
@@ -12,6 +17,7 @@ class loginControll{
 		private $loginView;
 		private $loginModel;
 		private $logOutView;
+        private $newUserView;
 		private $loggedIn = false;
 
 
@@ -21,6 +27,7 @@ class loginControll{
 			$this->loginModel = new \model\loginModel();
 			$this->loginView = new \view\loginView($this->loginModel);
 			$this->logOutView = new \view\logOutView($this->loginModel);
+            $this->newUserView = new \view\NewUserView();
 		}
 
 
@@ -80,14 +87,44 @@ class loginControll{
 					$this->loggedIn = $this->didLoginThisRequest();
 			}
 
-					
+            if($this->newUserView->usrHasPressedBackToLogin()){
+                return $this->loginView->showLoginView($this->loggedIn);
+            }
+
+            if($this->newUserView->usrHasPressedRegister()){
+                try {
+                    $this->loginModel->validateNewUser($this->newUserView->getUserName(), $this->newUserView->getPassword(),
+                    $this->newUserView->getPassword2());
+
+
+                }catch (\model\usernameAndPasswordToShortException $e){
+                    $this->newUserView->setUsernameAndPasswordToShortMessage();
+                    return $this->newUserView->showNewUserForm();
+                }catch(\model\PasswordToShortException $e){
+                    $this->newUserView->setToShortPasswordMessage();
+                    return $this->newUserView->showNewUserForm();
+                }catch(\model\UsernameToShortException $e){
+                    $this->newUserView->setToShortUsernameMessage();
+                    return $this->newUserView->showNewUserForm();
+                }catch(\model\PasswordsDontMatchException $e){
+                    $this->newUserView->setPasswordsDontMatchMessage();
+                    return $this->newUserView->showNewUserForm();
+                }
+            }
+
+            if($this->loginView->usrPressedAddNewUser()){
+                return $this->newUserView->showNewUserForm();
+
+            }
+
+
 			if ($this->loginModel->isUserLoggedin() == true) {
 				return  $this->logOutView->showlogOutView($this->loggedIn);
 			}
 			else
 			{
 				return $this->loginView->showLoginView($this->loggedIn);
-			}	
+			}
 		}
 
 	}

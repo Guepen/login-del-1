@@ -122,6 +122,25 @@ class loginModel {
 	}
 
 
+    public function validateNewUser($username, $password, $password2){
+        if(mb_strlen($username) < 3 && mb_strlen($password) < 6 && mb_strlen($password2) < 6){
+            throw new \model\UsernameAndPasswordToShortException();
+        }
+
+        else if(mb_strlen($password) < 6 && mb_strlen($password2) < 6){
+            throw new \model\PasswordToShortException();
+        }
+
+        else if(mb_strlen($username) < 3 && mb_strlen($password) > 5 && mb_strlen($password2) > 5){
+            throw new \model\UsernameToShortException();
+        }
+
+        else if($password !== $password2){
+            //echo"dont mtach";
+            throw new \model\PasswordsDontMatchException();
+        }
+    }
+
 
 	public function logout(){
 		unset($_SESSION[$this->session]);	

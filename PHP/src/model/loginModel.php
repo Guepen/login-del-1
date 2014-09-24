@@ -123,6 +123,7 @@ class loginModel {
 
 
     public function validateNewUser($username, $password, $password2){
+        $regex = '/^[a-z0-9]+$/i';
         if(mb_strlen($username) < 3 && mb_strlen($password) < 6 && mb_strlen($password2) < 6){
             throw new \model\UsernameAndPasswordToShortException();
         }
@@ -138,6 +139,14 @@ class loginModel {
         else if($password !== $password2){
             //echo"dont mtach";
             throw new \model\PasswordsDontMatchException();
+        }
+
+        else if(!preg_match('/^[a-z0-9]+$/i', $username)){
+            throw new \model\ProhibitedCharacterInUsernameException();
+        }
+
+        else if(mb_strlen($username) > 2 && mb_strlen($password) > 5 && mb_strlen($password2) >5 && $password === $password2){
+            return true;
         }
     }
 

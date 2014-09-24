@@ -2,14 +2,18 @@
 	
 	namespace controller;
 
-   	require_once("./src/view/loginView.php");
+require_once("./src/view/loginView.php");
 	require_once("./src/view/logOutView.php");
     require_once("./src/view/NewUserView.php");
 	require_once("./src/model/loginModel.php");
+    require_once("./src/model/DAO/User.php");
+    require_once("./src/model/DAO/UserRepository.php");
     require_once("./src/model/Exceptions/UsernameAndPasswordToShortException.php");
     require_once("./src/model/Exceptions/PasswordToShortException.php");
     require_once("./src/model/Exceptions/UsernameToShortException.php");
     require_once("./src/model/Exceptions/PasswordsDontMatchException.php");
+    require_once("./src/model/Exceptions/UserExistsException.php");
+    require_once("./src/model/Exceptions/ProhibitedCharacterInUsernameException.php");
 
 
 class loginControll{
@@ -93,9 +97,16 @@ class loginControll{
 
             if($this->newUserView->usrHasPressedRegister()){
                 try {
-                    $this->loginModel->validateNewUser($this->newUserView->getUserName(), $this->newUserView->getPassword(),
-                    $this->newUserView->getPassword2());
+                    if ( $this->loginModel->validateNewUser($this->newUserView->getUserName(), $this->newUserView->getPassword(),
+                        $this->newUserView->getPassword2())) {
+                        $user = new \model\User($this->newUserView->getUserName(), $this->newUserView->getPassword());
+                        $userRepository = new \model\UserRepository();
+                        $userRepository->add($user);
+                        $this->loginView->setRegistrationSuccesMessae();
+                        return $this->loginView->showLoginView($this->loggedIn);
 
+
+                    }
 
                 }catch (\model\usernameAndPasswordToShortException $e){
                     $this->newUserView->setUsernameAndPasswordToShortMessage();
@@ -108,6 +119,12 @@ class loginControll{
                     return $this->newUserView->showNewUserForm();
                 }catch(\model\PasswordsDontMatchException $e){
                     $this->newUserView->setPasswordsDontMatchMessage();
+                    return $this->newUserView->showNewUserForm();
+                }catch(\model\UserExistsException $e){
+                    $this->newUserView->setUserExistsMessage();
+                    return $this->newUserView->showNewUserForm();
+                }catch(\model\ProhibitedCharacterInUsernameException $e){
+                    $this->newUserView->setProhibitedCharacterMessage();
                     return $this->newUserView->showNewUserForm();
                 }
             }

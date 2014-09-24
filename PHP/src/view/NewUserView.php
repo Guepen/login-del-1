@@ -57,6 +57,14 @@ class NewUserView{
         }
     }
 
+    public function setUserExistsMessage(){
+        $this->message = "Användarnamnet är upptaget";
+    }
+
+    public function setProhibitedCharacterMessage(){
+        $this->message = "Användarnamnet innehåller ogiltliga tecken";
+    }
+
     public function usrHasPressedRegister(){
         if(isset($_POST['submit'])){
             return true;

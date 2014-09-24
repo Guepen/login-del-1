@@ -12,6 +12,7 @@ class loginView{
 	private $password = "password";
 	private $session = "session";
     private $newUserFormLocation="register";
+    private $ret;
 
 	public function __construct(\model\loginModel $loginModel){
 		$this->loginModel = $loginModel;
@@ -87,30 +88,33 @@ class loginView{
         return false;
     }
 
-	public function showLoginView ($loggedIn){	
-		$ret = "";	
+    public function setRegistrationSuccesMessae(){
+        $this->ret = "Registrering av ny användare lyckades";
+    }
+
+	public function showLoginView ($loggedIn){
 		if ($this->getUserName() == true && $this->getPassword() == true) {
 			if ($this->loginModel->isUserLoggedin() == false) {
-				$ret .= "Felaktigt användarnamn och/eller lösenord ";
+				$this->ret .= "Felaktigt användarnamn och/eller lösenord ";
 			}
 		}
 
 		if ( $this->submitLogin() == true) {
 	     	if ($this->userName() == empty($_POST[$this->username]) ){
-				$ret .= "Användarnamn måste anges!";
+				$this->ret .= "Användarnamn måste anges!";
 			}
 
 			if ($this->password() == empty($_POST[$this->password])) {	
-				$ret .= "Lösenordet måste anges!";
+				$this->ret .= "Lösenordet måste anges!";
 			}
 		}
 
 		if (isset($_POST[$this->submitLogout]) == true) {
-			$ret .="Du har nu loggat ut";
+			$this->ret .="Du har nu loggat ut";
 		}
 		else{
 				if ($this->IsSetCookies() == true && $loggedIn == false) {
-				$ret .= "Felaktig information i cookie";
+				$this->ret .= "Felaktig information i cookie";
 				setcookie('loginView::user', "" , time() -1);
 				setcookie('loginView::pass' , "" , time() -1);
 
@@ -125,7 +129,7 @@ class loginView{
 		             <a href='?register' name='newUser'>Registrera ny användare</a>
 					 <fieldset>
 					 <legend>Login - Skriv in användarnamn och lösenord</legend>
- 					 $ret
+ 					 $this->ret
  					 <label>Användarnamn : </label> <input type='text' name='".$this->username."' maxlength='30' value='".$this -> getUserName()."'/>
 					 <label>Lösenord : </label><input type='password' name='".$this->password."' maxlength='30'/>
 					 <label>Håll mig inloggad : </label><input type='checkbox' name='".$this->KeepMe."'/>

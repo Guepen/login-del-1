@@ -31,7 +31,11 @@ class loginView{
 
 
 	public function submitLogin(){
-		return isset($_POST[$this->submitLogin]);
+        if(isset($_POST[$this->submitLogin])){
+            //var_dump("pressed login");
+		return  true;
+        }
+        return false;
 	}
 
 
@@ -77,7 +81,7 @@ class loginView{
 
 
 
-	public function usrCheckedit(){
+	public function usrCheckedKeepMe(){
 		return isset($_POST[$this->KeepMe]);
 	}
 
@@ -140,7 +144,7 @@ class loginView{
 		}
 
 
-	public function ifUsrWantToKeepUsrAPass(){
+	public function setCookie(){
 		$currentTime = time();
 		$userCookie = $this->getUserName();
 		$passCookie = $this->getCryptPassword();

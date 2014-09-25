@@ -6,7 +6,7 @@
  	$view = new HTMLView();
  	$loginControll = new \controller\loginControll();
 
- 	$htmlBody = $loginControll->displayLogin();
+ 	$htmlBody = $loginControll->render();
 	$view->echoHTML($htmlBody);
 
     setlocale(LC_ALL, "sv_SE.utf8");

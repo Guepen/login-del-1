@@ -22,9 +22,30 @@ class UserRepository extends \model\Repository {
             $query->execute($params);
 
         }catch (\PDOException $e){
+            /**
+             * if a user already has wished username
+             */
             if($e->getCode() === "23000"){
                 throw new \model\UserExistsException();
             }
         }
+    }
+
+    public function getUser($username){
+        $db = $this->connection();
+
+        $sql = "SELECT * FROM $this->dbTable WHERE " . self::$username ." =?";
+        $params = array($username);
+
+        $query = $db->prepare($sql);
+        $query->execute($params);
+
+        $result = $query->fetch();
+
+        if($result){
+            return new \model\User($result["username"], $result["password"]);
+        }
+
+        return null;
     }
 }

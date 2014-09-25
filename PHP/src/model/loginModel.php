@@ -102,20 +102,21 @@ class loginModel {
 
 	public function isUserLoggedin(){
 		if (isset($_SESSION[$this->session]) == true) {
+            var_dump("user is set");
 			return true;
 		}
 		return false;
  	}
 
 
-	public function checkInput($user , $pass , $userCookie, $passCookie , $CookieTimeNow){
+	public function checkInput($user , $pass, $dbUser, $dbPassword, $userCookie, $passCookie , $CookieTimeNow){
 
-		if (($user == $this->username && $pass == $this->password) == true
+		if (($user == $dbUser && $pass == $dbPassword) === true
 						|| $passCookie == $this->PasswordCookieFromFile && 
 										 $userCookie == $this->username &&
 							$CookieTimeNow < (int)$this->DateCookieFromFile ){
 
-				 $_SESSION[$this->session] = true;
+				 $_SESSION[$this->session] = $user;
 				 return true;
 		}
 		return false;
@@ -154,6 +155,10 @@ class loginModel {
 	public function logout(){
 		unset($_SESSION[$this->session]);	
 	}
+
+    public function getUsername(){
+        return $_SESSION[$this->session];
+    }
 
 }
 

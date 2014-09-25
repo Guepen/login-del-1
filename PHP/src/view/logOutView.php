@@ -9,15 +9,16 @@ class logOutView{
  	private $submitLogout = "submitLogout";
 
  	public function ShowlogOutView($loggedIn){
+        $username = $this->loginModel->getUsername();
  		$ret ="";
- 		if ($this->loginView->usrCheckedit() == false 
+ 		if ($this->loginView->usrCheckedKeepMe() == false
  			&& $this->loginView->getUserName() == true
  		 	&& $this->loginView->getPassword() == true) {
  			$ret .= "Inloggning lyckades!";	
  		}
  	
 
- 		if ($this->loginView->usrCheckedit() == true 
+ 		if ($this->loginView->usrCheckedKeepMe() == true
  			&& $this->loginView->submitLogin() == true 
  			&& $this->loginModel->isUserLoggedin() == true) {
  			$ret .= "Inloggning lyckades och vi kommer ihåg dig nästa gång";
@@ -31,7 +32,7 @@ class logOutView{
  		$LoggedInForm = "
  		<form action='' method='POST' >
  				 <h1>Laboration login del 1</h1>
- 				 <h2>Admin är inloggad</h2>
+ 				<h3> $username</h3>
  				 $ret
  				 </br>
  				 </br>

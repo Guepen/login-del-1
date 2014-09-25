@@ -9,7 +9,7 @@ namespace model;
  */
 abstract class Repository{
     protected  $dbUsername =  'root@localhost';
-    protected $dbPassword = 'Password';
+    protected  $dbPassword = 'Password';
     protected  $dbConnectionString = 'mysql:host=localhost;dbname=kaffe';
     protected  $dbConnection;
     protected  $dbTable;

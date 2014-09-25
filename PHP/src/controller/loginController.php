@@ -6,6 +6,7 @@ require_once("./src/view/loginView.php");
 require_once("./src/view/logOutView.php");
 require_once("./src/view/NewUserView.php");
 require_once("./src/model/loginModel.php");
+require_once("./src/controller/RegisterController.php");
 require_once("./src/model/DAO/User.php");
 require_once("./src/model/DAO/UserRepository.php");
 require_once("./src/model/Exceptions/UsernameAndPasswordToShortException.php");
@@ -23,12 +24,10 @@ class loginControll{
     private $logOutView;
     private $newUserView;
     private $userRepository;
+    private $registerControl;
     private $loggedIn = false;
     private $password;
     private $username;
-
-
-
 
     public function __construct(){
         $this->loginModel = new \model\loginModel();
@@ -36,24 +35,18 @@ class loginControll{
         $this->logOutView = new \view\logOutView($this->loginModel);
         $this->newUserView = new \view\NewUserView();
         $this->userRepository = new \model\UserRepository();
+        $this->registerControl = new \controller\RegisterController();
     }
 
     public function doControl(){
         $this->render();
     }
 
-
-
-
-
-
     private function getUsrAndPass(){
 
         $this->password = $this->loginView->getPassword();
         $this->username = $this->loginView->getUserName();
     }
-
-
 
 
     public function isUsrLoggedOut(){
@@ -86,46 +79,9 @@ class loginControll{
             $this->loggedIn;
         }
 
-        if($this->newUserView->usrHasPressedBackToLogin()){
-            return $this->loginView->showLoginView($this->loggedIn);
-        }
-
-        if($this->newUserView->usrHasPressedRegister()){
-            try {
-                if ( $this->loginModel->validateNewUser($this->newUserView->getUserName(), $this->newUserView->getPassword(),
-                    $this->newUserView->getPassword2())) {
-                    $user = new \model\User($this->newUserView->getUserName(), $this->newUserView->getPassword());
-
-                    $this->userRepository->add($user);
-                    $this->loginView->setRegistrationSuccesMessae();
-                    return $this->loginView->showLoginView($this->loggedIn);
-
-
-                }
-
-            }catch (\model\usernameAndPasswordToShortException $e){
-                $this->newUserView->setUsernameAndPasswordToShortMessage();
-                return $this->newUserView->showNewUserForm();
-            }catch(\model\PasswordToShortException $e){
-                $this->newUserView->setToShortPasswordMessage();
-                return $this->newUserView->showNewUserForm();
-            }catch(\model\UsernameToShortException $e){
-                $this->newUserView->setToShortUsernameMessage();
-                return $this->newUserView->showNewUserForm();
-            }catch(\model\PasswordsDontMatchException $e){
-                $this->newUserView->setPasswordsDontMatchMessage();
-                return $this->newUserView->showNewUserForm();
-            }catch(\model\UserExistsException $e){
-                $this->newUserView->setUserExistsMessage();
-                return $this->newUserView->showNewUserForm();
-            }catch(\model\ProhibitedCharacterInUsernameException $e){
-                $this->newUserView->setProhibitedCharacterMessage();
-                return $this->newUserView->showNewUserForm();
-            }
-        }
 
         if($this->loginView->usrPressedAddNewUser()){
-            return $this->newUserView->showNewUserForm();
+            return $this->registerControl->registerControl();
 
         }
 
@@ -141,7 +97,6 @@ class loginControll{
 
 
     public function userDidPressLogin(){
-      // var_dump("dfdsz");
            $this->getUsrAndPass();
            if ($this->loginView->usrCheckedKeepMe() == true) {
                    $this->loginView->setcookie();
@@ -150,4 +105,3 @@ class loginControll{
 
 }
 
-?>

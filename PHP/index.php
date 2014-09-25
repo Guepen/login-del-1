@@ -5,6 +5,7 @@
 
  	$view = new HTMLView();
  	$loginControll = new \controller\loginControll();
+   // $registerControll = new \controller\RegisterController();
 
  	$htmlBody = $loginControll->render();
 	$view->echoHTML($htmlBody);

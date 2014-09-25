@@ -4,11 +4,18 @@ namespace model;
 
 require_once ('./src/model/DAO/Repository.php');
 
+/**
+ * Class UserRepository
+ * @package model
+ */
 class UserRepository extends \model\Repository {
     private static $username = 'username';
     private  static $password = 'password';
+    private $db;
+
     public function __construct(){
         $this->dbTable = 'user';
+        $this->db = $this->connection();
     }
 
     public function add(User $user){
@@ -18,7 +25,7 @@ class UserRepository extends \model\Repository {
             $sql = "INSERT INTO $this->dbTable (" . self::$username . ", " . self::$password . ") VALUES (?,?)";
             $params = array($user->getUsername(), $user->getPassword());
 
-            $query = $db->prepare($sql);
+            $query = $this->db->prepare($sql);
             $query->execute($params);
 
         }catch (\PDOException $e){
@@ -32,20 +39,38 @@ class UserRepository extends \model\Repository {
     }
 
     public function getUser($username){
-        $db = $this->connection();
+        try {
 
-        $sql = "SELECT * FROM $this->dbTable WHERE " . self::$username ." =?";
-        $params = array($username);
+            $sql = "SELECT * FROM $this->dbTable WHERE " . self::$username . " =?";
+            $params = array($username);
 
-        $query = $db->prepare($sql);
-        $query->execute($params);
+            $query = $this->db->prepare($sql);
+            $query->execute($params);
 
-        $result = $query->fetch();
+            $result = $query->fetch();
 
-        if($result){
-            return new \model\User($result["username"], $result["password"]);
+            if ($result) {
+                return new \model\User($result["username"], $result["password"]);
+            }
+
+            return null;
+
+        } catch (\PDOException $e) {
+            throw new \Exception("Ett oväntat fel inträffade");
         }
+    }
 
-        return null;
+    public function SetCookie($username, $expireTime){
+        try{
+
+            $sql = "UPDATE $this->dbTable SET acces =? WHERE ". self::$username ."=?";
+            $params = array($expireTime, $username);
+
+            $query = $this->db->prepare($sql);
+            $query->execute($params);
+
+        }catch (\PDOException $e){
+            die("Fel med cookies i db");
+        }
     }
 }

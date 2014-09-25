@@ -3,6 +3,8 @@
 	require_once("common/HTMLView.php");
 	require_once("src/controller/loginController.php");
 
+    session_start();
+
  	$view = new HTMLView();
  	$loginControll = new \controller\loginControll();
    // $registerControll = new \controller\RegisterController();

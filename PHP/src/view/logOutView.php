@@ -6,6 +6,7 @@ class logOutView{
 
  	private $loginModel;
  	private $loginView;
+    private $cookieStorage;
  	private $submitLogout = "submitLogout";
 
  	public function ShowlogOutView($loggedIn){
@@ -24,7 +25,7 @@ class logOutView{
  			$ret .= "Inloggning lyckades och vi kommer ihåg dig nästa gång";
 	 	}
 
- 		if ($this->loginView->IsSetCookies() == true 
+ 		if ($this->cookieStorage->IsSetCookies() == true
  			 && $loggedIn == true) {
  			$ret .= "Inloggning lyckades via cookies";
  		}
@@ -43,12 +44,10 @@ class logOutView{
  		return $LoggedInForm;	
 	 }
 
-
-
-
  	public function __construct(\model\loginModel $loginModel){
  		$this->loginModel = $loginModel;	
  		$this->loginView = new \view\loginView($this->loginModel);
+        $this->cookieStorage = new \view\CookieStorage();
  	}
 
 

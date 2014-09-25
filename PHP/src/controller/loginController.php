@@ -7,6 +7,7 @@ require_once("./src/view/logOutView.php");
 require_once("./src/view/NewUserView.php");
 require_once("./src/model/loginModel.php");
 require_once("./src/controller/RegisterController.php");
+require_once("./src/view/CookieStorage.php");
 require_once("./src/model/DAO/User.php");
 require_once("./src/model/DAO/UserRepository.php");
 require_once("./src/model/Exceptions/UsernameAndPasswordToShortException.php");
@@ -25,6 +26,7 @@ class loginControll{
     private $newUserView;
     private $userRepository;
     private $registerControl;
+    private $cookieStorage;
     private $loggedIn = false;
     private $password;
     private $username;
@@ -36,6 +38,7 @@ class loginControll{
         $this->newUserView = new \view\NewUserView();
         $this->userRepository = new \model\UserRepository();
         $this->registerControl = new \controller\RegisterController();
+        $this->cookieStorage = new \view\CookieStorage();
     }
 
     public function doControl(){
@@ -43,7 +46,6 @@ class loginControll{
     }
 
     private function getUsrAndPass(){
-
         $this->password = $this->loginView->getPassword();
         $this->username = $this->loginView->getUserName();
     }
@@ -52,6 +54,7 @@ class loginControll{
     public function isUsrLoggedOut(){
         if ($this->logOutView->SubmitLogout() == true) {
             $this->loginModel->logout();
+            //return $this->loginView->showLoginView($this->loggedIn);
         }
     }
 
@@ -62,23 +65,18 @@ class loginControll{
         }
 
         if ($this->loginView->submitLogin() == true) {
-            $this->userDidPressLogin();
+            $this->getUsrAndPass();
             $dbUser = $this->userRepository->getUser($this->username);
-            //var_dump($dbUser->getUsername(), $dbUser->getPassword());
-            $userCookie = $this->loginView->getCookieUsername();
-            $passCookie = $this->loginView->getCookiePassword();
-            $CookieTimeNow = time();
 
             if ($dbUser !== NULL) {
                 if ($this->loginModel->checkInput($this->username, $this->password, $dbUser->getUsername(),
-                    $dbUser->getPassword(), $userCookie, $passCookie, $CookieTimeNow)
-                ) {
+                    $dbUser->getPassword())) {
+                    $this->userDidPressLogin();
                     return $this->logOutView->showlogOutView($this->loggedIn);
                 }
             }
             $this->loggedIn;
         }
-
 
         if($this->loginView->usrPressedAddNewUser()){
             return $this->registerControl->registerControl();
@@ -95,12 +93,11 @@ class loginControll{
 
     }
 
-
     public function userDidPressLogin(){
-           $this->getUsrAndPass();
-           if ($this->loginView->usrCheckedKeepMe() == true) {
-                   $this->loginView->setcookie();
-               }
+        if ($this->loginView->usrCheckedKeepMe() == true) {
+            $this->loginView->setcookie();
+            $this->userRepository->SetCookie($this->username, $this->loginModel->getCookieExpireTime());
+        }
     }
 
 }

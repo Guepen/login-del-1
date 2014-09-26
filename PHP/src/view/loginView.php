@@ -22,13 +22,6 @@ class loginView{
 
     }
 
-    private function pressLogIn(){
-        if (isset($_POST[$this->submitLogin]) == true) {
-            return true;
-        }
-        return false;
-    }
-
     public function submitLogin(){
         if(isset($_POST[$this->submitLogin])){
             //var_dump("pressed login");
@@ -37,32 +30,14 @@ class loginView{
         return false;
     }
 
-    /**
-     * @return bool
-     * TODO this we can do better
-     */
-    private function  userName(){
-        if (isset($_POST[$this->username]) == true) {
-            return true;
-        }
-        return false;
-    }
-
-    private function password(){
-        if (isset($_POST[$this->password]) == true) {
-            return true;
-        }
-        return false;
-    }
-
     public function getUserName(){
-        if ($this->userName() == true) {
+        if (isset($_POST[$this->username]) == true) {
             return htmlentities($_POST[$this->username]);
         }
     }
 
     public function getPassword(){
-        if ($this->password() == true) {
+        if ((isset($_POST[$this->password]) == true)) {
             return htmlentities($_POST[$this->password]);
         }
     }
@@ -90,11 +65,11 @@ class loginView{
         }
 
         if ( $this->submitLogin() == true) {
-            if ($this->userName() == empty($_POST[$this->username]) ){
+            if (empty($_POST[$this->username]) ){
                 $this->ret .= "Användarnamn måste anges!";
             }
 
-            if ($this->password() == empty($_POST[$this->password])) {
+            if (empty($_POST[$this->password])) {
                 $this->ret .= "Lösenordet måste anges!";
             }
         }
@@ -135,7 +110,22 @@ class loginView{
         if (isset($_POST[$this->KeepMe]) == true) {
             $this->cookieStorage->save('loginView::user', $this->getUserName(),$this->loginModel->getCookieExpireTime());
             $this->cookieStorage->save('loginView::pass', $this->getCryptPassword() ,$this->loginModel->getCookieExpireTime());
-            return true;
+
+            if(!isset($_COOKIE['loginView::pass'])){
+                $_COOKIE['loginView::pass'] = $this->getCryptPassword();
+            }
+
+                return true;
+        }
+        return false;
+    }
+
+    public function loadCookie(){
+
+        if(isset($_COOKIE['loginView::pass'])){
+            $_COOKIE['loginView::pass'] = $this->getCryptPassword();
+
+            return $_COOKIE['loginView::pass'];
         }
         return false;
     }

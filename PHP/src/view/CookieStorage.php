@@ -3,7 +3,10 @@
 namespace view;
 
 class CookieStorage{
+    private $name;
+
     public function save($name, $value, $expire){
+        $this->name = $name;
         setcookie($name, $value, $expire);
 
     }
@@ -26,7 +29,9 @@ class CookieStorage{
     }
 
     public function getCookiePassword(){
-        if ($this->issetCookiePassword() == true) {
+        var_dump("drfdffd");
+        if (isset($_COOKIE['loginView::pass'])) {
+            var_dump("ghgh");
             return $_COOKIE['loginView::pass'];
         }
     }

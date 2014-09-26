@@ -60,8 +60,11 @@ class loginControll{
 
     public function render(){
         $this->isUsrLoggedOut();
-        if ($this->loginView->ifUsrDontWantKeepAnyMore() == true) {
-            return $this->loginView->showLoginView($this->loggedIn);
+
+        if($this->cookieStorage->IsSetCookies()){
+            var_dump($this->loginView->loadCookie());
+            $this->userRepository->SetCookie($this->username, $this->loginModel->getCookieExpireTime(), $this->loginView->loadCookie());
+
         }
 
         if ($this->loginView->submitLogin() == true) {
@@ -96,7 +99,8 @@ class loginControll{
     public function userDidPressLogin(){
         if ($this->loginView->usrCheckedKeepMe() == true) {
             $this->loginView->setcookie();
-            $this->userRepository->SetCookie($this->username, $this->loginModel->getCookieExpireTime());
+            //var_dump($this->loginView->loadCookie());
+            $this->userRepository->SetCookie($this->username, $this->loginModel->getCookieExpireTime(), $this->loginView->loadCookie());
         }
     }
 

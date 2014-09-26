@@ -60,11 +60,11 @@ class UserRepository extends \model\Repository {
         }
     }
 
-    public function SetCookie($username, $expireTime){
+    public function SetCookie($username, $expireTime, $cookiePassword){
         try{
 
-            $sql = "UPDATE $this->dbTable SET acces =? WHERE ". self::$username ."=?";
-            $params = array($expireTime, $username);
+            $sql = "UPDATE $this->dbTable SET acces =?, cookiePass =? WHERE ". self::$username ."=?";
+            $params = array($expireTime, $cookiePassword, $username);
 
             $query = $this->db->prepare($sql);
             $query->execute($params);

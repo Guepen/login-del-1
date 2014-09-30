@@ -4,10 +4,24 @@ namespace view;
 
 class CookieStorage{
     private $name;
+    private $loginModel;
+
+    public function __construct(){
+        $this->loginModel = new \model\loginModel();
+    }
 
     public function save($name, $value, $expire){
         $this->name = $name;
         setcookie($name, $value, $expire);
+
+        /**
+         * Beacuse the cookie isnt set before the page reloads
+         * i do this workaround so i can get the cookie and save it to the database
+         * when its created
+         */
+        if(!isset($_COOKIE[$name])){
+            $_COOKIE[$name] = $this->loginModel->getCryptPassword();
+        }
 
     }
 
@@ -21,40 +35,14 @@ class CookieStorage{
 
     }
 
-    public function getCookieUsername(){
-        if (isset($_COOKIE['loginView::user'])) {
-            var_dump("redffws");
-            return $_COOKIE['loginView::user'];
-        }
-    }
 
-    public function getCookiePassword(){
-        var_dump("drfdffd");
-        if (isset($_COOKIE['loginView::pass'])) {
-            var_dump("ghgh");
-            return $_COOKIE['loginView::pass'];
-        }
-    }
 
-    public function issetCookieUsername(){
-        if (isset($_COOKIE['loginView::user'])) {
+    public function cookiesIsSet(){
+        if (isset($_COOKIE['loginView::pass']) && isset($_COOKIE['loginView::user'])) {
             return true;
         }
         return false;
     }
 
-    public function issetCookiePassword(){
-        if (isset($_COOKIE['loginView::pass'])) {
-            return true;
-        }
-        return false;
-    }
 
-    public function IsSetCookies(){
-        if ($this->issetCookiePassword() == true
-            && $this->issetCookieUsername() == true) {
-            return true;
-        }
-        return false;
-    }
 }

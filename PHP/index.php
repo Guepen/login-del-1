@@ -6,10 +6,9 @@
     session_start();
 
  	$view = new HTMLView();
- 	$loginControll = new \controller\loginControll();
-   // $registerControll = new \controller\RegisterController();
+ 	$loginControl = new \controller\loginControll();
 
- 	$htmlBody = $loginControll->render();
+ 	$htmlBody = $loginControl->render();
 	$view->echoHTML($htmlBody);
 
     setlocale(LC_ALL, "sv_SE.utf8");

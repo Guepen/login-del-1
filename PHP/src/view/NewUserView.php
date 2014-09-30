@@ -14,7 +14,9 @@ class NewUserView{
     public function showNewUserForm(){
 
         $html = "
+                     <h1>Laborationskod th222fa</h1>
                      <a href='?login'>Tillbaka</a>
+                     <H1>Ej inloggad, registrear användare</H1>
                      <form method='post'>
                      <fieldset>
                      $this->message
@@ -61,7 +63,8 @@ class NewUserView{
         $this->message = "Användarnamnet är upptaget";
     }
 
-    public function setProhibitedCharacterMessage(){
+    public function setProhibitedCharacterMessage($username){
+        $this->username = $username;
         $this->message = "Användarnamnet innehåller ogiltliga tecken";
     }
 

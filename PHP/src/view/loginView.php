@@ -1,30 +1,29 @@
 <?php
 
 namespace view;
+use model\loginModel;
+use view\CookieStorage;
+
 require_once("./src/view/CookieStorage.php");
 
 class loginView{
 
     private $loginModel;
     private $submitLogin = "submitLogin";
-    private $submitLogout = "submitLogout";
     private $KeepMe = "KeepMe";
     private $username = "username";
     private $password = "password";
-    private $session = "session";
     private $newUserFormLocation="register";
     private $ret;
     private $cookieStorage;
 
-    public function __construct(\model\loginModel $loginModel){
+    public function __construct(loginModel $loginModel){
         $this->loginModel = $loginModel;
-        $this->cookieStorage = new \view\CookieStorage();
-
+        $this->cookieStorage = new CookieStorage();
     }
 
     public function submitLogin(){
         if(isset($_POST[$this->submitLogin])){
-            //var_dump("pressed login");
             return  true;
         }
         return false;
@@ -34,12 +33,14 @@ class loginView{
         if (isset($_POST[$this->username]) == true) {
             return htmlentities($_POST[$this->username]);
         }
+        return null;
     }
 
     public function getPassword(){
-        if ((isset($_POST[$this->password]) == true)) {
+        if (isset($_POST[$this->password]) == true) {
             return htmlentities($_POST[$this->password]);
         }
+        return null;
     }
 
     public function usrCheckedKeepMe(){
@@ -57,100 +58,55 @@ class loginView{
         $this->ret = "Registrering av ny användare lyckades";
     }
 
-    public function showLoginView ($loggedIn){
-        if ($this->getUserName() == true && $this->getPassword() == true) {
-            if ($this->loginModel->isUserLoggedin() == false) {
-                $this->ret .= "Felaktigt användarnamn och/eller lösenord ";
-            }
-        }
+    public function setWrongInformationInCookieMessage(){
+        $this->ret = "Fel information i cookies";
+    }
 
-        if ( $this->submitLogin() == true) {
-            if (empty($_POST[$this->username]) ){
-                $this->ret .= "Användarnamn måste anges!";
-            }
+    public function setMissingUsernameMessage(){
+        $this->ret = "Användarnamn saknas";
+    }
 
-            if (empty($_POST[$this->password])) {
-                $this->ret .= "Lösenordet måste anges!";
-            }
-        }
+    public function setMissingPasswordMessage(){
+        $this->ret = "Lösenord saknas";
+    }
 
-        if (isset($_POST[$this->submitLogout]) == true) {
-            $this->ret .="Du har nu loggat ut";
-        }
-        else{
-            if ($this->cookieStorage->IsSetCookies() == true && $loggedIn == false) {
-                $this->ret .= "Felaktig information i cookie";
-                setcookie('loginView::user', "" , time() -1);
-                setcookie('loginView::pass' , "" , time() -1);
+    public function setWrongUserinformationMessage(){
+        $this->ret = "Felaktigt användarnamn och/eller lösenord";
+    }
 
-            }
-        }
+    public function showLoginView (){
 
-        $htmlBody = "<h1>Laboration login del 1 - Ej Inloggad</h1>
-		             <form action='' method='POST' >
-		             <a href='?register' name='newUser'>Registrera ny användare</a>
+        $htmlBody = "<h1>Laborationskod th222fa</h1>
+                     <a href='?register' name='newUser'>Registrera ny användare</a>
+                     <h3>Ej inloggad</h3>
+		             <form action='?login' method='POST' >
 					 <fieldset>
 					 <legend>Login - Skriv in användarnamn och lösenord</legend>
- 					 $this->ret
+ 					 <p>$this->ret</p>
  					 <label>Användarnamn : </label> <input type='text' name='".$this->username."' maxlength='30' value='".$this -> getUserName()."'/>
 					 <label>Lösenord : </label><input type='password' name='".$this->password."' maxlength='30'/>
 					 <label>Håll mig inloggad : </label><input type='checkbox' name='".$this->KeepMe."'/>
 					 <input type='submit' name='".$this->submitLogin."' value='Logga in'/>
 					 </fieldset>
 					 </form>" ;
+
         return $htmlBody;
     }
 
-
-    /**
-     * @return bool
-     * TODO Check why we return
-     */
     public function setCookie(){
         if (isset($_POST[$this->KeepMe]) == true) {
-            $this->cookieStorage->save('loginView::user', $this->getUserName(),$this->loginModel->getCookieExpireTime());
-            $this->cookieStorage->save('loginView::pass', $this->getCryptPassword() ,$this->loginModel->getCookieExpireTime());
+            $this->cookieStorage->save('loginView::pass', $this->loginModel->getCryptPassword(), $this->loginModel->getCookieExpireTime());
+            $this->cookieStorage->save('loginView::user', $this->getUserName(), $this->loginModel->getCookieExpireTime());
 
-            if(!isset($_COOKIE['loginView::pass'])){
-                $_COOKIE['loginView::pass'] = $this->getCryptPassword();
-            }
-
-                return true;
-        }
-        return false;
-    }
-
-    public function loadCookie(){
-
-        if(isset($_COOKIE['loginView::pass'])){
-            $_COOKIE['loginView::pass'] = $this->getCryptPassword();
-
-            return $_COOKIE['loginView::pass'];
-        }
-        return false;
-    }
-
-
-    /**
-     * @return bool
-     * TODO move the unset SESSION to model
-     */
-    public function ifUsrDontWantKeepAnyMore(){
-        if ($this->cookieStorage->issetCookieUsername() == true && $this->cookieStorage->issetCookiePassword() == true) {
-            if (isset($_POST[$this->submitLogout]) == true) {
-                $this->cookieStorage->save('loginView::user', "" , time() -1);
-                $this->cookieStorage->save('loginView::pass' , "" , time() -1);
-
-                unset($_SESSION[$this->session]);
-                return true;
-            }
-            return false;
         }
     }
 
-    public function getCryptPassword(){
-        return	crypt(md5($this->getPassword()));
+    public function loadPasswordCookie(){
+       return $this->cookieStorage->load('loginView::pass');
     }
 
+    public function loadUsernameCookie(){
+        return $this->cookieStorage->load('loginView::user');
+    }
 
 }

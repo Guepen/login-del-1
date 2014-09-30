@@ -2,6 +2,8 @@
 
 namespace model;
 
+use model\User;
+
 require_once ('./src/model/DAO/Repository.php');
 
 /**
@@ -20,7 +22,6 @@ class UserRepository extends \model\Repository {
 
     public function add(User $user){
         try{
-            $db = $this->connection();
 
             $sql = "INSERT INTO $this->dbTable (" . self::$username . ", " . self::$password . ") VALUES (?,?)";
             $params = array($user->getUsername(), $user->getPassword());
@@ -34,6 +35,9 @@ class UserRepository extends \model\Repository {
              */
             if($e->getCode() === "23000"){
                 throw new \model\UserExistsException();
+            }
+            else{
+                die("Ett oväntat fel inträffade");
             }
         }
     }
@@ -50,21 +54,21 @@ class UserRepository extends \model\Repository {
             $result = $query->fetch();
 
             if ($result) {
-                return new \model\User($result["username"], $result["password"]);
+                return new User($result["username"], $result["password"]);
             }
 
             return null;
 
         } catch (\PDOException $e) {
-            throw new \Exception("Ett oväntat fel inträffade");
+            die("Ett oväntat fel inträffade");
         }
     }
 
-    public function SetCookie($username, $expireTime, $cookiePassword){
+    public function SetCookie($username, $expireTime, $cookiePassword, $cookieUsername){
         try{
 
-            $sql = "UPDATE $this->dbTable SET acces =?, cookiePass =? WHERE ". self::$username ."=?";
-            $params = array($expireTime, $cookiePassword, $username);
+            $sql = "UPDATE $this->dbTable SET acces =?, cookiePass =?, cookieUser=? WHERE ". self::$username ."=?";
+            $params = array($expireTime, $cookiePassword, $cookieUsername, $username);
 
             $query = $this->db->prepare($sql);
             $query->execute($params);
@@ -73,4 +77,28 @@ class UserRepository extends \model\Repository {
             die("Fel med cookies i db");
         }
     }
+
+   public function getCookie($name){
+       try {
+
+           $sql = "SELECT acces, cookiePass, cookieUser  FROM $this->dbTable WHERE " . self::$username . " =?";
+           $params = array($name);
+
+           $query = $this->db->prepare($sql);
+           $query->execute($params);
+
+           $result = $query->fetch();
+           //var_dump($result);
+
+           if ($result) {
+               return $result;
+           }
+
+           return null;
+
+       } catch (\PDOException $e) {
+           die("Ett oväntat fel inträffade");
+       }
+
+   }
 }

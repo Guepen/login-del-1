@@ -2,7 +2,7 @@
 
 namespace view;
 
-class NewUserView{
+class RegisterView{
     private $username;
     private $password;
     private $password2;
@@ -57,6 +57,7 @@ class NewUserView{
         if(isset($_GET[$this->loginFormLocation])){
             return true;
         }
+        return false;
     }
 
     public function setUserExistsMessage(){
@@ -79,8 +80,8 @@ class NewUserView{
     public function getUserName(){
         if(isset($_POST['username'])){
             return $this->username = $_POST['username'];
-
         }
+        return false;
     }
 
     public function getPassword(){

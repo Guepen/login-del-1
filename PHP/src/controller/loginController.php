@@ -12,21 +12,10 @@ use model\WrongUserinformationException;
 use view\CookieStorage;
 use view\loginView;
 use view\logOutView;
-use view\NewUserView;
+use view\RegisterView;
+use view\UserAgent;
 
-require_once("./src/view/loginView.php");
-require_once("./src/view/logOutView.php");
-require_once("./src/view/NewUserView.php");
-require_once("./src/model/loginModel.php");
-require_once("./src/controller/RegisterController.php");
-require_once("./src/view/CookieStorage.php");
-require_once("./src/model/DAO/User.php");
-require_once("./src/model/DAO/UserRepository.php");
-require_once("./src/model/Exceptions/MissingPasswordException.php");
-require_once("./src/model/Exceptions/MissingUsernameException.php");
-require_once("./src/model/Exceptions/WrongUserinformationException.php");
-
-class loginControll{
+class LoginControl{
 
     private $loginView;
     private $loginModel;
@@ -43,14 +32,13 @@ class loginControll{
         $this->loginModel = new loginModel();
         $this->loginView = new loginView($this->loginModel);
         $this->logOutView = new logOutView($this->loginModel);
-        $this->newUserView = new NewUserView();
+        $this->newUserView = new RegisterView();
         $this->userRepository = new UserRepository();
         $this->registerControl = new RegisterController();
         $this->cookieStorage = new CookieStorage();
     }
 
     public function doControl(){
-        // $this->doLoginCookie();
         $this->render();
     }
 
@@ -68,30 +56,43 @@ class loginControll{
         return false;
     }
 
+    public function createSessionUserAgent(){
+        $userAgent = new UserAgent();
+        $this->loginModel->setUserAgent($userAgent->getUserAgent());
+    }
 
     public function render(){
         if ( $this->isUsrLoggedOut()) {
+            $this->loginView->setLoggedOutMessage();
+            $this->logOutView->deleteCookies();
             return $this->loginView->showLoginView($this->loggedIn);
         }
 
-        if($this->loginModel->isUserLoggedin()){
-            return $this->logOutView->showlogOutView($this->loggedIn);
+        if ($this->loginModel->isUserLoggedin() == true) {
+            $userAgent = new UserAgent();
+            if ($this->loginModel->checkUserAgent($userAgent->getUserAgent())) {
+                return $this->logOutView->showlogOutView($this->loggedIn);
+            }
         }
-        //TODO make this ceheck in a new function
+
+        //TODO break out this in a new function
         if ($this->cookieStorage->cookiesIsSet()) {
             try {
                 $cookie = $this->userRepository->getCookie($this->loginView->loadUsernameCookie());
-                if (time() < $cookie['acces']) {
+                if ($this->loginModel->checkIfCookieExpireTimeIsValid($cookie['acces'])) {
                     if ($this->loginModel->doLogInCookie($cookie['cookieUser'], $cookie['cookiePass'],
                         $this->loginView->loadUsernameCookie(), $this->loginView->loadPasswordCookie())) {
+                        $this->createSessionUserAgent();
                         $this->logOutView->setLoggedInWithCookiesMessage();
                         return $this->logOutView->showlogOutView($this->loggedIn);
 
                     } else{
+                        $this->logOutView->deleteCookies();
                         $this->loginView->setWrongInformationInCookieMessage();
                     }
                 }
                 else{
+                    $this->logOutView->deleteCookies();
                     $this->loginView->setWrongInformationInCookieMessage();
                 }
             } catch (\Exception $e) {
@@ -101,16 +102,15 @@ class loginControll{
 
         if ($this->loginView->submitLogin() == true) {
             $this->getUsrAndPass();
-
             try {
                 if ($this->loginModel->validateInput($this->username, $this->password)) {
                     $dbUser = $this->userRepository->getUser($this->username);
 
                     if ($dbUser !== NULL) {
                         if ($this->loginModel->doLogIn($this->username, $this->password, $dbUser->getUsername(),
-                            $dbUser->getPassword())
-                        ) {
+                            $dbUser->getPassword())) {
                             $this->userDidPressLogin();
+                            $this->createSessionUserAgent();
                             return $this->logOutView->showlogOutView($this->loggedIn);
                         }
                     }
@@ -122,20 +122,15 @@ class loginControll{
             } catch(WrongUserinformationException $e){
                 $this->loginView->setWrongUserinformationMessage();
             }
-            $this->loggedIn;
         }
 
         if($this->loginView->usrPressedAddNewUser()){
             return $this->registerControl->registerControl();
-
         }
 
-        if ($this->loginModel->isUserLoggedin() == true) {
-            return  $this->logOutView->showlogOutView($this->loggedIn);
-        }
         else
         {
-            return $this->loginView->showLoginView($this->loggedIn);
+            return $this->loginView->showLoginView();
         }
 
     }

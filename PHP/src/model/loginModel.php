@@ -14,6 +14,13 @@ class loginModel {
         return time()+200;
     }
 
+    public function checkIfCookieExpireTimeIsValid($cookieExpireTime){
+        if(time() < $cookieExpireTime){
+            return true;
+        }
+        return false;
+    }
+
     public function isUserLoggedin(){
         if (isset($_SESSION[$this->session]) == true) {
             return true;
@@ -36,9 +43,25 @@ class loginModel {
 
     }
 
+    public function checkUserAgent($ua){
+        if(isset($_SESSION['userAgent'])){
+            if($ua === $_SESSION['userAgent']){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public function setUserAgent($userAgent){
+        if(isset($_SESSION['userAgent']) == false){
+            $_SESSION['userAgent'] = $userAgent;
+        }
+    }
+
     public function doLogIn($user , $pass, $dbUser, $dbPassword){
         if (($user == $dbUser && $pass == $dbPassword) === true ){
-            $_SESSION['password'] = $pass;
+            $_SESSION['password'] = crypt(md5($pass));
             $_SESSION[$this->session] = $user;
             return true;
         }
@@ -51,7 +74,7 @@ class loginModel {
 
     public function doLogInCookie($dbUser, $dbPass, $cookieUser, $cookiePassword){
         if($dbUser === $cookieUser && $dbPass === $cookiePassword){
-            $_SESSION['password'] = $dbPass;
+            $_SESSION['password'] = crypt(md5($dbPass));
             $_SESSION[$this->session] = $dbUser;
             return true;
         }
@@ -67,7 +90,7 @@ class loginModel {
     }
 
     public function getCryptPassword(){
-        return	crypt(md5($_SESSION['password']));
+        return $_SESSION['password'];
     }
 }
 

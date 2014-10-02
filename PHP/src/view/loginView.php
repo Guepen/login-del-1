@@ -4,8 +4,6 @@ namespace view;
 use model\loginModel;
 use view\CookieStorage;
 
-require_once("./src/view/CookieStorage.php");
-
 class loginView{
 
     private $loginModel;
@@ -58,6 +56,10 @@ class loginView{
         $this->ret = "Registrering av ny användare lyckades";
     }
 
+    public function setLoggedOutMessage(){
+        $this->ret = "Du är nu utloggad";
+    }
+
     public function setWrongInformationInCookieMessage(){
         $this->ret = "Fel information i cookies";
     }
@@ -77,7 +79,7 @@ class loginView{
     public function showLoginView (){
 
         $htmlBody = "<h1>Laborationskod th222fa</h1>
-                     <a href='?register' name='newUser'>Registrera ny användare</a>
+                     <a href='?register'>Registrera ny användare</a>
                      <h3>Ej inloggad</h3>
 		             <form action='?login' method='POST' >
 					 <fieldset>

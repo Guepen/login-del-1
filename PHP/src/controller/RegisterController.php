@@ -2,16 +2,6 @@
 
 namespace controller;
 
-require_once("./src/model/RegisterModel.php");
-require_once("./src/model/Exceptions/UsernameAndPasswordToShortException.php");
-require_once("./src/model/Exceptions/PasswordToShortException.php");
-require_once("./src/model/Exceptions/UsernameToShortException.php");
-require_once("./src/model/Exceptions/PasswordsDontMatchException.php");
-require_once("./src/model/Exceptions/UserExistsException.php");
-require_once("./src/model/Exceptions/ProhibitedCharacterInUsernameException.php");
-
-
-
 use model\loginModel;
 use model\PasswordsDontMatchException;
 use model\PasswordToShortException;
@@ -23,7 +13,7 @@ use model\usernameAndPasswordToShortException;
 use model\UsernameToShortException;
 use model\UserRepository;
 use view\loginView;
-use view\NewUserView;
+use view\RegisterView;
 
 class RegisterController{
 
@@ -35,7 +25,7 @@ class RegisterController{
     private $userRepository;
 
     function __construct(){
-        $this->newUserView = new NewUserView();
+        $this->newUserView = new RegisterView();
         $this->registerModel = new RegisterModel();
         $this->loginModel = new loginModel();
         $this->loginView = new loginView($this->loginModel);

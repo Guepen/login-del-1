@@ -8,9 +8,9 @@ namespace model;
  * This code is taken from https://github.com/gingerswede/1dv408-HT14/blob/master/Portfolio/src/model/Repository.php
  */
 abstract class Repository{
-    protected  $dbUsername =  'root@localhost';
-    protected  $dbPassword = 'Password';
-    protected  $dbConnectionString = 'mysql:host=localhost;dbname=kaffe';
+    protected  $dbUsername =  '131860-jd64493';
+    protected  $dbPassword = 'KalleAnka1';
+    protected  $dbConnectionString = 'mysql:host=mysql14.citynetwork.se;dbname=131860-ovsriy410012';
     protected  $dbConnection;
     protected  $dbTable;
 

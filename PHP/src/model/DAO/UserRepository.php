@@ -2,9 +2,8 @@
 
 namespace model;
 
+use model\Repository;
 use model\User;
-
-require_once ('./src/model/DAO/Repository.php');
 
 /**
  * Class UserRepository

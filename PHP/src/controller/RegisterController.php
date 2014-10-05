@@ -15,6 +15,10 @@ use model\UserRepository;
 use view\loginView;
 use view\RegisterView;
 
+/**
+ * Class RegisterController
+ * @package controller
+ */
 class RegisterController{
 
     private $newUserView;
@@ -32,6 +36,9 @@ class RegisterController{
         $this->userRepository = new UserRepository();
     }
 
+    /**
+     * TODO break out this function to different functions
+     */
     function registerControl() {
         if ($this->newUserView->usrHasPressedBackToLogin()) {
             return $this->loginView->showLoginView($this->loggedIn);
@@ -64,7 +71,5 @@ class RegisterController{
         }
 
         return $this->newUserView->showNewUserForm();
-
-
     }
 }

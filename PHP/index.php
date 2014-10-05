@@ -1,12 +1,11 @@
 <?php
 
 
-     require_once("./src/ImportFiles.php");
-
+    require_once("./src/ImportFiles.php");
     session_start();
 
  	$view = new \view\HTMLView();
+    $loginControl = new \controller\LoginControl();
 
- 	$loginControl = new \controller\LoginControl();
  	$htmlBody = $loginControl->render();
 	$view->echoHTML($htmlBody);

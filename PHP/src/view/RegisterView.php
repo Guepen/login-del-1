@@ -2,6 +2,11 @@
 
 namespace view;
 
+/**
+ * Class RegisterView
+ * @package view
+ * The view for the register page
+ */
 class RegisterView{
     private $username;
     private $password;
@@ -9,8 +14,9 @@ class RegisterView{
     private $message;
     private $loginFormLocation = "login";
 
-    public function __construct(){}
-
+    /**
+     * @return string with HTML
+     */
     public function showNewUserForm(){
 
         $html = "
@@ -42,7 +48,8 @@ class RegisterView{
     }
 
     public function setUsernameAndPasswordToShortMessage(){
-        $this->message = " Användarnamnet har för få tecken. Minst 3 tecken. <p>Lösenorden har för få tecken. Minst 6 tecken</p>";
+        $this->message = " Användarnamnet har för få tecken. Minst 3 tecken.
+                          <p>Lösenorden har för få tecken. Minst 6 tecken</p>";
     }
 
     public function setToShortPasswordMessage(){
@@ -64,6 +71,9 @@ class RegisterView{
         $this->message = "Användarnamnet är upptaget";
     }
 
+    /**
+     * @param $username string filtered username
+     */
     public function setProhibitedCharacterMessage($username){
         $this->username = $username;
         $this->message = "Användarnamnet innehåller ogiltliga tecken";
@@ -73,7 +83,6 @@ class RegisterView{
         if(isset($_POST['submit'])){
             return true;
         }
-
         return false;
     }
 
@@ -88,11 +97,13 @@ class RegisterView{
         if(isset($_POST['password'])){
            return $this->password = $_POST['password'];
         }
+        return false;
     }
 
     public function getPassword2(){
         if(isset($_POST['password2'])){
             return $this->password2 = $_POST['password2'];
         }
+        return false;
     }
 }

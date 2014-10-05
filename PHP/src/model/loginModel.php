@@ -43,9 +43,9 @@ class loginModel {
 
     }
 
-    public function checkUserAgent($ua){
+    public function checkUserAgent($userAgent){
         if(isset($_SESSION['userAgent'])){
-            if($ua === $_SESSION['userAgent']){
+            if($userAgent === $_SESSION['userAgent']){
                 return true;
             }
         }
@@ -60,13 +60,12 @@ class loginModel {
     }
 
     public function doLogIn($user , $pass, $dbUser, $dbPassword){
-        if (($user == $dbUser && $pass == $dbPassword) === true ){
+        if ($user === $dbUser && $pass === $dbPassword) {
             $_SESSION['password'] = crypt(md5($pass));
             $_SESSION[$this->session] = $user;
             return true;
-        }
 
-        else{
+        } else {
             throw new WrongUserinformationException();
         }
 

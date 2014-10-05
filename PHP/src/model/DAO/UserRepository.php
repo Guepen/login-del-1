@@ -4,6 +4,7 @@ namespace model;
 
 use model\Repository;
 use model\User;
+use model\UserExistsException;
 
 /**
  * Class UserRepository
@@ -33,7 +34,7 @@ class UserRepository extends \model\Repository {
              * if a user already has wished username
              */
             if($e->getCode() === "23000"){
-                throw new \model\UserExistsException();
+                throw new UserExistsException();
             }
             else{
                 die("Ett oväntat fel inträffade");
@@ -53,6 +54,9 @@ class UserRepository extends \model\Repository {
             $result = $query->fetch();
 
             if ($result) {
+                /**
+                 * username and password are columns in the db
+                 */
                 return new User($result["username"], $result["password"]);
             }
 

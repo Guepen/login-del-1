@@ -2,6 +2,10 @@
 
 namespace model;
 
+/**
+ * Class User
+ * @package model
+ */
 class User{
     private $username;
     private $password;

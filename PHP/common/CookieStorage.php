@@ -2,12 +2,14 @@
 
 namespace view;
 
+use model\loginModel;
+
 class CookieStorage{
     private $name;
     private $loginModel;
 
     public function __construct(){
-        $this->loginModel = new \model\loginModel();
+        $this->loginModel = new loginModel();
     }
 
     public function save($name, $value, $expire){
@@ -20,21 +22,16 @@ class CookieStorage{
          * when its created
          */
         if(!isset($_COOKIE[$name])){
-            $_COOKIE[$name] = $this->loginModel->getCryptPassword();
+            $_COOKIE[$name] = $value;
         }
-
     }
 
     public function load($name){
         if(isset($_COOKIE[$name])){
             return $_COOKIE[$name];
         }
+        return false;
     }
-
-    public function delete($name){
-
-    }
-
 
 
     public function cookiesIsSet(){

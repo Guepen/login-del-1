@@ -7,7 +7,7 @@ require_once("./src/view/logOutView.php");
 require_once("./src/view/RegisterView.php");
 require_once("./src/model/loginModel.php");
 require_once("./src/controller/RegisterController.php");
-require_once("./src/model/DAO/User.php");
+require_once("./src/model/User.php");
 require_once ('./src/model/DAO/Repository.php');
 require_once("./src/model/DAO/UserRepository.php");
 require_once("./common/Exceptions/UsernameAndPasswordToShortException.php");

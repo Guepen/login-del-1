@@ -4,6 +4,10 @@ namespace view;
 use model\loginModel;
 use view\CookieStorage;
 
+/**
+ * Class loginView
+ * @package view
+ */
 class loginView{
 
     private $loginModel;
@@ -76,19 +80,46 @@ class loginView{
         $this->ret = "Felaktigt användarnamn och/eller lösenord";
     }
 
+    /**
+     * @return string with HTML
+     */
     public function showLoginView (){
 
-        $htmlBody = "<h1>Laborationskod th222fa</h1>
+        $htmlBody = "
                      <a href='?register'>Registrera ny användare</a>
                      <h3>Ej inloggad</h3>
-		             <form action='?login' method='POST' >
+		             <form action='?login' class='form-horizontal' method='POST' >
 					 <fieldset>
 					 <legend>Login - Skriv in användarnamn och lösenord</legend>
  					 <p>$this->ret</p>
- 					 <label>Användarnamn : </label> <input type='text' name='".$this->username."' maxlength='30' value='".$this -> getUserName()."'/>
-					 <label>Lösenord : </label><input type='password' name='".$this->password."' maxlength='30'/>
-					 <label>Håll mig inloggad : </label><input type='checkbox' name='".$this->KeepMe."'/>
-					 <input type='submit' name='".$this->submitLogin."' value='Logga in'/>
+ 					 <div class='form-group'>
+ 					 <label class='col-sm-2 control-label'>Användarnamn : </label>
+ 					 <div class='col-sm-10'>
+ 					 <input placeholder='Skriv in ditt användarnamn' class='form-control' type='text'
+ 					 name='".$this->username."' maxlength='30' value='".$this -> getUserName()."'/>
+ 					 </div>
+ 					 </div>
+ 					 <div class='form-group'>
+					 <label class='col-sm-2 control-label'>Lösenord : </label>
+					 <div class='col-sm-10'>
+					 <input placeholder='Skriv in ditt lösenord' class='form-control' type='password'
+					 name='".$this->password."' maxlength='30'/>
+					 </div>
+					 </div>
+					  <div class='form-group'>
+				      <div class='col-sm-offset-2 col-sm-10'>
+				      <div class='checkbox'>
+					 <label>
+					    <input class='checkbox' type='checkbox'  name='".$this->KeepMe."'/> Håll mig inloggad
+					 </label>
+					  </div>
+					  </div>
+					  </div>
+					  <div class='form-group'>
+				        <div class='col-sm-offset-2 col-sm-10'>
+					 <input type='submit' class='btn btn-default' name='".$this->submitLogin."' value='Logga in'/>
+					 </div>
+					 </div>
 					 </fieldset>
 					 </form>" ;
 
@@ -97,9 +128,11 @@ class loginView{
 
     public function setCookie(){
         if (isset($_POST[$this->KeepMe]) == true) {
-            $this->cookieStorage->save('loginView::pass', $this->loginModel->getCryptPassword(), $this->loginModel->getCookieExpireTime());
-            $this->cookieStorage->save('loginView::user', $this->getUserName(), $this->loginModel->getCookieExpireTime());
+            $this->cookieStorage->save('loginView::pass', $this->loginModel->getCryptPassword(),
+            $this->loginModel->getCookieExpireTime());
 
+            $this->cookieStorage->save('loginView::user', $this->getUserName(),
+            $this->loginModel->getCookieExpireTime());
         }
     }
 

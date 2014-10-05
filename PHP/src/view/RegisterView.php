@@ -20,23 +20,44 @@ class RegisterView{
     public function showNewUserForm(){
 
         $html = "
-                     <h1>Laborationskod th222fa</h1>
                      <a href='?login'>Tillbaka</a>
-                     <H1>Ej inloggad, registrear användare</H1>
-                     <form method='post'>
+                     <H3>Ej inloggad, registrear användare</H3>
+                     <form method='post' class='form-horizontal'>
                      <fieldset>
-                     $this->message
 					 <legend>Registrera ny användare - Skriv in användarnamn och lösenord</legend>
- 					 </br>
- 					 <label>Användarnamn : </label> <input type='text' name='username' value='$this->username' maxlength='30'/>
- 					 <p></p>
-					 <label>Lösenord : </label><input type='password' name='password' maxlength='30'/>
-					 <p></p>
-					 <label>Repetera Lösenord : </label><input type='password' name='password2' maxlength='30'/>
-					 <p></p>
-					 <input type='submit' name='submit' value='Registrera'/>
+					  $this->message
+
+ 					 <div class='form-group'>
+ 					 <label class='col-sm-2 control-label' for='username'>Användarnamn : </label>
+ 					 <div class='col-sm-10'>
+ 					 <input placeholder='Skriv in önskat användarnamn' class='form-control' type='text'
+ 					 name='username' value='$this->username' maxlength='30'/>
+ 					 </div>
+ 					 </div>
+
+ 					 <div class='form-group'>
+					 <label class='col-sm-2 control-label' for='password' >Lösenord : </label>
+					 <div class='col-sm-10'>
+					 <input placeholder='Skriv in önskat lösenord' class='form-control' type='password'
+					 name='password' maxlength='30'/>
+					 </div>
+					 </div>
+
+					 <div class='form-group'>
+					 <label class='col-sm-2 control-label' for='password'  >Repetera Lösenord : </label>
+					 <div class='col-sm-10'>
+					 <input placeholder='Repetera lösenordet' class='form-control' type='password'
+					 name='password2' maxlength='30'/>
+					 </div>
+					 </div>
+
+					 <div class='form-group'>
+					 <div class='col-sm-offset-2 col-sm-10'>
+					 <input class='btn btn-default' type='submit' name='submit' value='Registrera'/>
+					 </div>
+					 </div>
+
 					 </fieldset>
-					 </br>
 					 </form>" ;
 
         return $html;

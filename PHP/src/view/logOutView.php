@@ -36,14 +36,9 @@ class logOutView{
 
  		$LoggedInForm = "
  		<form action='' method='POST' >
- 				 <h1>Laboration login del 1</h1>
  				<h3> $username</h3>
- 				 $this->ret
- 				 </br>
- 				 </br>
- 				 <input type='submit' name='".$this->submitLogout."' value='Logga ut'/>
- 				 </br>
- 				 </br>
+ 				 <p>$this->ret</p>
+ 				 <input class='btn btn-default' type='submit' name='".$this->submitLogout."' value='Logga ut'/>
  				 </form>";
  		return $LoggedInForm;	
 	 }
